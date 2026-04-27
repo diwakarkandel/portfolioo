@@ -1,0 +1,299 @@
+<div class="portfolio">
+  <header class="navbar">
+    <a href="#home" class="logo" (click)="closeMenu()">
+      <span>Diwakar</span>
+      <strong>Kandel</strong>
+    </a>
+
+    <button
+      class="menu-toggle"
+      type="button"
+      (click)="toggleMenu()"
+      [class.active]="menuOpen"
+      aria-label="Toggle navigation menu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav-links" [class.open]="menuOpen">
+      <a href="#home" (click)="closeMenu()">Home</a>
+      <a href="#about" (click)="closeMenu()">About</a>
+      <a href="#skills" (click)="closeMenu()">Skills</a>
+      <a href="#projects" (click)="closeMenu()">Projects</a>
+      <a href="#education" (click)="closeMenu()">Education</a>
+      <a href="#contact" (click)="closeMenu()">Contact</a>
+    </nav>
+  </header>
+
+  <section id="home" class="hero">
+    <div class="hero-profile-side">
+      <div class="profile-card">
+        <div class="profile-photo-box">
+          <img src="/profile.jpg" alt="Diwakar Kandel" class="profile-img">
+        </div>
+
+        <h3>{{ profile.name }}</h3>
+        <p>{{ profile.status }}</p>
+        <span>{{ profile.location }}</span>
+
+        <p class="profile-about">
+          {{ profile.shortIntro }}
+        </p>
+
+        <div class="social-links">
+          @for (social of socialLinks; track social.name) {
+            <a [href]="social.url" target="_blank" rel="noopener noreferrer">
+              {{ social.name }}
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div id="about" class="hero-about-side">
+      <p class="tag">Hello, I am</p>
+
+      <h1>{{ profile.name }}</h1>
+
+      <h2>{{ profile.role }}</h2>
+
+      <div class="about-text-block">
+        <p>
+         I possess a strong foundation in Core Java and Object-Oriented Programming, along with experience in frontend development and database systems. 
+         I am committed to continuous learning, writing clean and efficient code, and developing solutions that address real-world challenges.
+        </p>
+      </div>
+
+      <div class="hero-buttons">
+        <a href="#projects" class="btn primary">View Projects</a>
+        <a href="#contact" class="btn secondary">Hire / Contact Me</a>
+      </div>
+
+      <div class="cv-buttons">
+        <a [href]="profile.cvUrl" target="_blank" class="cv-btn view-cv">
+          View CV
+        </a>
+
+        <a [href]="profile.cvUrl" download class="cv-btn download-cv">
+          Download CV
+        </a>
+      </div>
+
+      <div class="stats-grid">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-card">
+            <h3>{{ stat.value }}</h3>
+            <p>{{ stat.label }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="section skills-section">
+    <div class="section-heading">
+      <p>Skills</p>
+      <h2>Skills & Expertise</h2>
+    </div>
+
+    <p class="subtitle">
+      Skills are shown in a compact carousel. Use the side arrows to explore.
+    </p>
+
+    <div class="skills-carousel">
+      <button class="arrow-btn" type="button" (click)="previousSkills()" aria-label="Previous skills">
+        ‹
+      </button>
+
+      <div class="circle-skills-grid">
+        @for (skill of visibleSkills; track skill.name) {
+          <div class="circle-skill-card">
+            <div class="circle-progress" [style.--value]="skill.level">
+              <div class="circle-inner">
+                <span>{{ skill.level }}%</span>
+              </div>
+            </div>
+
+            <h3>{{ skill.name }}</h3>
+          </div>
+        }
+      </div>
+
+      <button class="arrow-btn" type="button" (click)="nextSkills()" aria-label="Next skills">
+        ›
+      </button>
+    </div>
+  </section>
+
+  <section id="projects" class="section projects-section">
+    <div class="section-heading">
+      <p>Projects</p>
+      <h2>Featured Projects</h2>
+    </div>
+
+    <p class="subtitle">Filter projects by category</p>
+
+    <div class="filter-buttons">
+      @for (category of categories; track category) {
+        <button
+          type="button"
+          [class.active]="selectedCategory === category"
+          (click)="changeCategory(category)"
+        >
+          {{ category }}
+        </button>
+      }
+    </div>
+
+    <div class="projects-grid">
+      @for (project of filteredProjects; track project.title; let i = $index) {
+        <div class="project-card">
+          <div class="project-top">
+            <span class="project-category">{{ project.category }}</span>
+            <span class="project-number">0{{ i + 1 }}</span>
+          </div>
+
+          <h3>{{ project.title }}</h3>
+          <p>{{ project.description }}</p>
+
+          <div class="tech-list">
+            @for (tech of project.tech; track tech) {
+              <span>{{ tech }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section id="education" class="section education-section">
+    <div class="section-heading">
+      <p>Education</p>
+      <h2>Academic Journey</h2>
+    </div>
+
+    <div class="timeline">
+      @for (item of education; track item.title) {
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+
+          <div class="timeline-content">
+            <span>{{ item.year }}</span>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.place }}</p>
+            <small>{{ item.board }}</small>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="section cert-section">
+    <div class="section-heading">
+      <p>Training</p>
+      <h2>Certifications & Training</h2>
+    </div>
+
+    <div class="cert-grid">
+      @for (cert of certifications; track cert) {
+        <div class="cert-card">
+          <span class="cert-mark"></span>
+          <p>{{ cert }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section id="contact" class="section contact-section">
+    <div class="section-heading contact-heading">
+      <p>Contact</p>
+      <h2>Get In Touch</h2>
+    </div>
+
+    <p class="subtitle contact-subtitle">
+      Have an opportunity, project or message? Send me a message directly.
+    </p>
+
+    <div class="contact-wrapper">
+      <div class="contact-info">
+        <h3>Contact Information</h3>
+
+        <div class="info-box">
+          <strong>Email</strong>
+          <p>{{ profile.email }}</p>
+        </div>
+
+        <div class="info-box">
+          <strong>Location</strong>
+          <p>{{ profile.location }}</p>
+        </div>
+
+        <div class="info-box">
+          <strong>Status</strong>
+          <p>{{ profile.status }}</p>
+        </div>
+
+        <div class="contact-social">
+          @for (social of socialLinks; track social.name) {
+            <a [href]="social.url" target="_blank" rel="noopener noreferrer">
+              {{ social.name }}
+            </a>
+          }
+        </div>
+      </div>
+
+      <form class="contact-form" (ngSubmit)="sendMessage()">
+        <input
+          type="text"
+          name="name"
+          placeholder="Your Name"
+          [(ngModel)]="contact.name"
+        >
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Your Email"
+          [(ngModel)]="contact.email"
+        >
+
+        <input
+          type="text"
+          name="subject"
+          placeholder="Message Subject"
+          [(ngModel)]="contact.subject"
+        >
+
+        <textarea
+          rows="6"
+          name="message"
+          placeholder="Your Message"
+          [(ngModel)]="contact.message"
+        ></textarea>
+
+        @if (successMessage) {
+          <p class="success">{{ successMessage }}</p>
+        }
+
+        @if (errorMessage) {
+          <p class="error">{{ errorMessage }}</p>
+        }
+
+        <button type="submit" [disabled]="isSending">
+          @if (isSending) {
+            Sending...
+          } @else {
+            Send Message
+          }
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Diwakar Kandel. All rights reserved.</p>
+    <p>Built with Angular | Barca inspired portfolio</p>
+  </footer>
+</div>

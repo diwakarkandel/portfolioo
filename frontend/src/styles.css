@@ -1,0 +1,23 @@
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #07162f;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+a,
+button,
+input,
+textarea {
+  font-family: inherit;
+}
