@@ -1,299 +1,293 @@
-<div class="portfolio">
-  <header class="navbar">
-    <a href="#home" class="logo" (click)="closeMenu()">
-      <span>Diwakar</span>
-      <strong>Kandel</strong>
-    </a>
+<div class="portfolio" [attr.data-theme]="theme">
 
-    <button
-      class="menu-toggle"
-      type="button"
-      (click)="toggleMenu()"
-      [class.active]="menuOpen"
-      aria-label="Toggle navigation menu"
-    >
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+  <!-- ===== Navbar ===== -->
+  <header class="navbar" [class.scrolled]="scrolled">
+    <div class="nav-inner">
+      <a href="#home" class="brand" (click)="closeMenu()">
+        <span class="brand-mark">{{ profile.initials }}</span>
+        <span class="brand-name">{{ profile.firstName }}<strong>{{ profile.lastName }}</strong></span>
+      </a>
 
-    <nav class="nav-links" [class.open]="menuOpen">
-      <a href="#home" (click)="closeMenu()">Home</a>
-      <a href="#about" (click)="closeMenu()">About</a>
-      <a href="#skills" (click)="closeMenu()">Skills</a>
-      <a href="#projects" (click)="closeMenu()">Projects</a>
-      <a href="#education" (click)="closeMenu()">Education</a>
-      <a href="#contact" (click)="closeMenu()">Contact</a>
-    </nav>
+      <nav class="nav-links" [class.open]="menuOpen">
+        <a *ngFor="let item of navItems"
+           [href]="'#' + item.toLowerCase()"
+           [class.active]="activeSection === item.toLowerCase()"
+           (click)="closeMenu()">{{ item }}</a>
+        <a class="nav-cv" [href]="profile.cvUrl" target="_blank" rel="noopener" (click)="closeMenu()">Resume ↗</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="theme-btn" type="button" (click)="toggleTheme()" aria-label="Toggle theme">
+          <svg *ngIf="theme === 'dark'" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+          </svg>
+          <svg *ngIf="theme === 'light'" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <button class="menu-toggle" type="button" (click)="toggleMenu()" [class.active]="menuOpen" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
   </header>
 
+  <!-- ===== Hero ===== -->
   <section id="home" class="hero">
-    <div class="hero-profile-side">
-      <div class="profile-card">
-        <div class="profile-photo-box">
-          <img src="/profile.jpg" alt="Diwakar Kandel" class="profile-img">
+    <div class="hero-bg"></div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="dot"></span>{{ profile.status }}</p>
+        <h1 class="hero-title">
+          Hi, I'm <span class="grad">{{ profile.firstName }}</span>.<br>
+          I build reliable backends.
+        </h1>
+        <p class="hero-role">{{ profile.role }} <span class="sep">/</span> {{ profile.tagline }}</p>
+        <p class="hero-summary">{{ profile.summary }}</p>
+
+        <div class="hero-cta">
+          <a href="#projects" class="btn primary">View My Work</a>
+          <a href="#contact" class="btn ghost">Get in Touch</a>
+          <a [href]="profile.cvUrl" download class="btn link">Download CV ↓</a>
         </div>
 
-        <h3>{{ profile.name }}</h3>
-        <p>{{ profile.status }}</p>
-        <span>{{ profile.location }}</span>
+        <div class="hero-socials">
+          <a *ngFor="let s of socialLinks" [href]="s.url" target="_blank" rel="noopener" class="soc" [attr.aria-label]="s.name">
+            <ng-container [ngSwitch]="s.icon">
+              <svg *ngSwitchCase="'linkedin'" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+              <svg *ngSwitchCase="'github'" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>
+              <svg *ngSwitchCase="'mail'" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 6 10 7 10-7"/></svg>
+            </ng-container>
+          </a>
+        </div>
+      </div>
 
-        <p class="profile-about">
-          {{ profile.shortIntro }}
-        </p>
+      <div class="hero-visual">
+        <div class="code-card">
+          <div class="code-head">
+            <span class="cdot r"></span><span class="cdot y"></span><span class="cdot g"></span>
+            <span class="code-file">Developer.java</span>
+          </div>
+          <pre class="code-body"><span class="k">class</span> <span class="c">Diwakar</span> <span class="p">&#123;</span>
+  <span class="k">String</span> role = <span class="s">"Backend Engineer"</span>;
+  <span class="k">String[]</span> stack = &#123; <span class="s">"Java"</span>, <span class="s">"Spring"</span> &#125;;
 
-        <div class="social-links">
-          @for (social of socialLinks; track social.name) {
-            <a [href]="social.url" target="_blank" rel="noopener noreferrer">
-              {{ social.name }}
-            </a>
-          }
+  <span class="k">void</span> <span class="f">build</span>() &#123;
+    api.design(<span class="s">"clean &amp; scalable"</span>);
+    db.model(<span class="s">"PostgreSQL"</span>);
+    ship();
+  <span class="p">&#125;</span>
+<span class="p">&#125;</span></pre>
         </div>
       </div>
     </div>
 
-    <div id="about" class="hero-about-side">
-      <p class="tag">Hello, I am</p>
-
-      <h1>{{ profile.name }}</h1>
-
-      <h2>{{ profile.role }}</h2>
-
-      <div class="about-text-block">
-        <p>
-         I possess a strong foundation in Core Java and Object-Oriented Programming, along with experience in frontend development and database systems. 
-         I am committed to continuous learning, writing clean and efficient code, and developing solutions that address real-world challenges.
-        </p>
-      </div>
-
-      <div class="hero-buttons">
-        <a href="#projects" class="btn primary">View Projects</a>
-        <a href="#contact" class="btn secondary">Hire / Contact Me</a>
-      </div>
-
-      <div class="cv-buttons">
-        <a [href]="profile.cvUrl" target="_blank" class="cv-btn view-cv">
-          View CV
-        </a>
-
-        <a [href]="profile.cvUrl" download class="cv-btn download-cv">
-          Download CV
-        </a>
-      </div>
-
-      <div class="stats-grid">
-        @for (stat of stats; track stat.label) {
-          <div class="stat-card">
-            <h3>{{ stat.value }}</h3>
-            <p>{{ stat.label }}</p>
-          </div>
-        }
+    <div class="stats-bar">
+      <div class="stat" *ngFor="let s of stats">
+        <span class="stat-val">{{ s.value }}</span>
+        <span class="stat-lbl">{{ s.label }}</span>
       </div>
     </div>
   </section>
 
-  <section id="skills" class="section skills-section">
-    <div class="section-heading">
-      <p>Skills</p>
-      <h2>Skills & Expertise</h2>
+  <!-- ===== About ===== -->
+  <section id="about" class="section">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2 class="sec-title">About Me</h2>
     </div>
-
-    <p class="subtitle">
-      Skills are shown in a compact carousel. Use the side arrows to explore.
-    </p>
-
-    <div class="skills-carousel">
-      <button class="arrow-btn" type="button" (click)="previousSkills()" aria-label="Previous skills">
-        ‹
-      </button>
-
-      <div class="circle-skills-grid">
-        @for (skill of visibleSkills; track skill.name) {
-          <div class="circle-skill-card">
-            <div class="circle-progress" [style.--value]="skill.level">
-              <div class="circle-inner">
-                <span>{{ skill.level }}%</span>
-              </div>
-            </div>
-
-            <h3>{{ skill.name }}</h3>
-          </div>
-        }
-      </div>
-
-      <button class="arrow-btn" type="button" (click)="nextSkills()" aria-label="Next skills">
-        ›
-      </button>
-    </div>
-  </section>
-
-  <section id="projects" class="section projects-section">
-    <div class="section-heading">
-      <p>Projects</p>
-      <h2>Featured Projects</h2>
-    </div>
-
-    <p class="subtitle">Filter projects by category</p>
-
-    <div class="filter-buttons">
-      @for (category of categories; track category) {
-        <button
-          type="button"
-          [class.active]="selectedCategory === category"
-          (click)="changeCategory(category)"
-        >
-          {{ category }}
-        </button>
-      }
-    </div>
-
-    <div class="projects-grid">
-      @for (project of filteredProjects; track project.title; let i = $index) {
-        <div class="project-card">
-          <div class="project-top">
-            <span class="project-category">{{ project.category }}</span>
-            <span class="project-number">0{{ i + 1 }}</span>
-          </div>
-
-          <h3>{{ project.title }}</h3>
-          <p>{{ project.description }}</p>
-
-          <div class="tech-list">
-            @for (tech of project.tech; track tech) {
-              <span>{{ tech }}</span>
-            }
-          </div>
+    <div class="about-grid">
+      <div class="about-photo">
+        <div class="photo-frame">
+          <img src="profile.jpg" alt="Diwakar Kandel" loading="lazy">
         </div>
-      }
+        <div class="about-badge">
+          <strong>{{ profile.location }}</strong>
+          <span>{{ profile.phone }}</span>
+        </div>
+      </div>
+      <div class="about-body">
+        <p class="about-lead">{{ profile.summary }}</p>
+        <h3 class="about-sub">Core Strengths</h3>
+        <ul class="strength-list">
+          <li *ngFor="let s of strengths">
+            <span class="check">✓</span>{{ s }}
+          </li>
+        </ul>
+        <a [href]="'mailto:' + profile.email" class="btn primary sm">Let's Work Together</a>
+      </div>
     </div>
   </section>
 
-  <section id="education" class="section education-section">
-    <div class="section-heading">
-      <p>Education</p>
-      <h2>Academic Journey</h2>
+  <!-- ===== Experience ===== -->
+  <section id="experience" class="section alt">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2 class="sec-title">Experience</h2>
     </div>
-
     <div class="timeline">
-      @for (item of education; track item.title) {
-        <div class="timeline-item">
-          <div class="timeline-dot"></div>
-
-          <div class="timeline-content">
-            <span>{{ item.year }}</span>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.place }}</p>
-            <small>{{ item.board }}</small>
+      <div class="tl-item" *ngFor="let exp of experiences">
+        <div class="tl-marker"><span [class.pulse]="exp.current"></span></div>
+        <div class="tl-card">
+          <div class="tl-top">
+            <div>
+              <h3 class="tl-role">{{ exp.role }}</h3>
+              <span class="tl-company">{{ exp.company }}</span>
+            </div>
+            <span class="tl-date" [class.now]="exp.current">{{ exp.duration }}</span>
+          </div>
+          <ul class="tl-points">
+            <li *ngFor="let p of exp.points">{{ p }}</li>
+          </ul>
+          <div class="chips">
+            <span class="chip" *ngFor="let t of exp.tech">{{ t }}</span>
           </div>
         </div>
-      }
+      </div>
     </div>
   </section>
 
-  <section class="section cert-section">
-    <div class="section-heading">
-      <p>Training</p>
-      <h2>Certifications & Training</h2>
+  <!-- ===== Skills ===== -->
+  <section id="skills" class="section">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2 class="sec-title">Skills &amp; Tools</h2>
     </div>
-
-    <div class="cert-grid">
-      @for (cert of certifications; track cert) {
-        <div class="cert-card">
-          <span class="cert-mark"></span>
-          <p>{{ cert }}</p>
+    <div class="skills-grid">
+      <div class="skill-card" *ngFor="let g of skillGroups">
+        <div class="skill-icon">{{ g.icon }}</div>
+        <h3 class="skill-cat">{{ g.category }}</h3>
+        <div class="chips">
+          <span class="chip solid" *ngFor="let s of g.skills">{{ s }}</span>
         </div>
-      }
+      </div>
     </div>
   </section>
 
-  <section id="contact" class="section contact-section">
-    <div class="section-heading contact-heading">
-      <p>Contact</p>
-      <h2>Get In Touch</h2>
+  <!-- ===== Projects ===== -->
+  <section id="projects" class="section alt">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2 class="sec-title">Featured Projects</h2>
     </div>
+    <div class="filters">
+      <button *ngFor="let c of categories" class="filter" [class.active]="selectedCategory === c" (click)="changeCategory(c)">{{ c }}</button>
+    </div>
+    <div class="projects-grid">
+      <article class="proj-card" *ngFor="let p of filteredProjects">
+        <div class="proj-head">
+          <span class="proj-cat">{{ p.category }}</span>
+          <a *ngIf="p.link" [href]="p.link" target="_blank" rel="noopener" class="proj-git" aria-label="View on GitHub">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12 12 0 0 0 24 12.5C24 5.87 18.63.5 12 .5z"/></svg>
+          </a>
+        </div>
+        <h3 class="proj-title">{{ p.title }}</h3>
+        <span class="proj-role">{{ p.role }}</span>
+        <p class="proj-desc">{{ p.description }}</p>
+        <div class="chips">
+          <span class="chip" *ngFor="let t of p.tech">{{ t }}</span>
+        </div>
+        <a *ngIf="p.link" [href]="p.link" target="_blank" rel="noopener" class="proj-link">View Repository →</a>
+      </article>
+    </div>
+  </section>
 
-    <p class="subtitle contact-subtitle">
-      Have an opportunity, project or message? Send me a message directly.
-    </p>
+  <!-- ===== Education & Certifications ===== -->
+  <section id="education" class="section">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2 class="sec-title">Education &amp; Training</h2>
+    </div>
+    <div class="edu-wrap">
+      <div class="edu-col">
+        <h3 class="col-label">Education</h3>
+        <div class="edu-card" *ngFor="let e of education">
+          <span class="edu-year">{{ e.year }}</span>
+          <h4 class="edu-title">{{ e.title }}</h4>
+          <p class="edu-place">{{ e.place }}</p>
+          <small class="edu-board">{{ e.board }}</small>
+        </div>
+      </div>
+      <div class="edu-col">
+        <h3 class="col-label">Certifications</h3>
+        <div class="cert-card" *ngFor="let c of certifications">
+          <span class="cert-mark">★</span>
+          <div>
+            <h4 class="cert-title">{{ c.title }}</h4>
+            <p class="cert-meta">{{ c.place }} · {{ c.date }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <div class="contact-wrapper">
+  <!-- ===== Contact ===== -->
+  <section id="contact" class="section alt">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <h2 class="sec-title">Get In Touch</h2>
+    </div>
+    <div class="contact-grid">
       <div class="contact-info">
-        <h3>Contact Information</h3>
+        <h3>Let's build something together.</h3>
+        <p>Have an opportunity, a project, or just want to say hello? My inbox is always open — I'll get back to you as soon as I can.</p>
 
-        <div class="info-box">
-          <strong>Email</strong>
-          <p>{{ profile.email }}</p>
+        <a [href]="'mailto:' + profile.email" class="ci-row">
+          <span class="ci-ico">✉</span>
+          <span><small>Email</small>{{ profile.email }}</span>
+        </a>
+        <a [href]="'tel:' + profile.phone" class="ci-row">
+          <span class="ci-ico">☎</span>
+          <span><small>Phone</small>{{ profile.phone }}</span>
+        </a>
+        <div class="ci-row">
+          <span class="ci-ico">⚲</span>
+          <span><small>Location</small>{{ profile.location }}</span>
         </div>
 
-        <div class="info-box">
-          <strong>Location</strong>
-          <p>{{ profile.location }}</p>
-        </div>
-
-        <div class="info-box">
-          <strong>Status</strong>
-          <p>{{ profile.status }}</p>
-        </div>
-
-        <div class="contact-social">
-          @for (social of socialLinks; track social.name) {
-            <a [href]="social.url" target="_blank" rel="noopener noreferrer">
-              {{ social.name }}
-            </a>
-          }
+        <div class="contact-socials">
+          <a *ngFor="let s of socialLinks" [href]="s.url" target="_blank" rel="noopener" class="csoc">{{ s.name }}</a>
         </div>
       </div>
 
-      <form class="contact-form" (ngSubmit)="sendMessage()">
-        <input
-          type="text"
-          name="name"
-          placeholder="Your Name"
-          [(ngModel)]="contact.name"
-        >
+      <form class="contact-form" (ngSubmit)="sendMessage()" novalidate>
+        <div class="row2">
+          <div class="fg">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" [(ngModel)]="contact.name" required>
+          </div>
+          <div class="fg">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@email.com" [(ngModel)]="contact.email" required>
+          </div>
+        </div>
+        <div class="fg">
+          <label for="subject">Subject</label>
+          <input id="subject" name="subject" type="text" placeholder="What's this about?" [(ngModel)]="contact.subject" required>
+        </div>
+        <div class="fg">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" placeholder="Tell me about it..." [(ngModel)]="contact.message" required></textarea>
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Your Email"
-          [(ngModel)]="contact.email"
-        >
+        <p *ngIf="successMessage" class="alert ok">✓ {{ successMessage }}</p>
+        <p *ngIf="errorMessage" class="alert err">✗ {{ errorMessage }}</p>
 
-        <input
-          type="text"
-          name="subject"
-          placeholder="Message Subject"
-          [(ngModel)]="contact.subject"
-        >
-
-        <textarea
-          rows="6"
-          name="message"
-          placeholder="Your Message"
-          [(ngModel)]="contact.message"
-        ></textarea>
-
-        @if (successMessage) {
-          <p class="success">{{ successMessage }}</p>
-        }
-
-        @if (errorMessage) {
-          <p class="error">{{ errorMessage }}</p>
-        }
-
-        <button type="submit" [disabled]="isSending">
-          @if (isSending) {
-            Sending...
-          } @else {
-            Send Message
-          }
+        <button type="submit" class="btn primary full" [disabled]="isSending">
+          <span *ngIf="!isSending">Send Message →</span>
+          <span *ngIf="isSending"><span class="spinner"></span> Sending...</span>
         </button>
       </form>
     </div>
   </section>
 
-  <footer>
-    <p>© 2026 Diwakar Kandel. All rights reserved.</p>
-    <p>Built with Angular | Barca inspired portfolio</p>
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="foot-inner">
+      <a href="#home" class="foot-brand">{{ profile.initials }}</a>
+      <p>&copy; 2026 {{ profile.name }}. All rights reserved.</p>
+      <a href="#home" class="to-top">Back to top ↑</a>
+    </div>
   </footer>
 </div>
