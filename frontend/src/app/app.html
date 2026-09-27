@@ -1,4 +1,5 @@
 <div class="portfolio" [attr.data-theme]="theme">
+  <div class="bg-orbs" aria-hidden="true"></div>
 
   <!-- ===== Navbar ===== -->
   <header class="navbar" [class.scrolled]="scrolled">
@@ -83,9 +84,9 @@
       </div>
     </div>
 
-    <div class="stats-bar">
+    <div class="stats-bar reveal zoom">
       <div class="stat" *ngFor="let s of stats">
-        <span class="stat-val">{{ s.value }}</span>
+        <span class="stat-val" [attr.data-count]="s.count" [attr.data-suffix]="s.suffix">0</span>
         <span class="stat-lbl">{{ s.label }}</span>
       </div>
     </div>
@@ -93,12 +94,12 @@
 
   <!-- ===== About ===== -->
   <section id="about" class="section">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-num">01</span>
       <h2 class="sec-title">About Me</h2>
     </div>
     <div class="about-grid">
-      <div class="about-photo">
+      <div class="about-photo reveal left">
         <div class="photo-frame">
           <img src="profile.jpg" alt="Diwakar Kandel" loading="lazy">
         </div>
@@ -107,7 +108,7 @@
           <span>{{ profile.phone }}</span>
         </div>
       </div>
-      <div class="about-body">
+      <div class="about-body reveal right">
         <p class="about-lead">{{ profile.summary }}</p>
         <h3 class="about-sub">Core Strengths</h3>
         <ul class="strength-list">
@@ -122,12 +123,12 @@
 
   <!-- ===== Experience ===== -->
   <section id="experience" class="section alt">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-num">02</span>
       <h2 class="sec-title">Experience</h2>
     </div>
     <div class="timeline">
-      <div class="tl-item" *ngFor="let exp of experiences">
+      <div class="tl-item reveal" *ngFor="let exp of experiences">
         <div class="tl-marker"><span [class.pulse]="exp.current"></span></div>
         <div class="tl-card">
           <div class="tl-top">
@@ -150,32 +151,53 @@
 
   <!-- ===== Skills ===== -->
   <section id="skills" class="section">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-num">03</span>
-      <h2 class="sec-title">Skills &amp; Tools</h2>
+      <h2 class="sec-title">Skills &amp; Expertise</h2>
     </div>
-    <div class="skills-grid">
-      <div class="skill-card" *ngFor="let g of skillGroups">
-        <div class="skill-icon">{{ g.icon }}</div>
-        <h3 class="skill-cat">{{ g.category }}</h3>
-        <div class="chips">
-          <span class="chip solid" *ngFor="let s of g.skills">{{ s }}</span>
+
+    <div class="skills-viz reveal">
+      <!-- Radar / spider chart -->
+      <div class="radar-card">
+        <svg class="radar" viewBox="0 0 340 310" role="img" aria-label="Competency radar chart">
+          <polygon *ngFor="let poly of radarRingPolys" [attr.points]="poly" class="radar-ring" />
+          <line *ngFor="let sp of radarSpokes" x1="170" y1="158" [attr.x2]="sp.x" [attr.y2]="sp.y" class="radar-spoke" />
+          <polygon class="radar-shape" [attr.points]="radarShape" />
+          <circle *ngFor="let d of radarShapePts" [attr.cx]="d.x" [attr.cy]="d.y" r="4.5" class="radar-dot" />
+          <text *ngFor="let l of radarLabels" [attr.x]="l.x" [attr.y]="l.y" [attr.text-anchor]="l.anchor" class="radar-label">
+            <tspan [attr.x]="l.x">{{ l.label }}</tspan>
+            <tspan [attr.x]="l.x" dy="15" class="radar-val">{{ l.value }}%</tspan>
+          </text>
+        </svg>
+      </div>
+
+      <!-- Animated proficiency bars -->
+      <div class="bars">
+        <div class="bar-row" *ngFor="let s of barSkills; let i = index">
+          <div class="bar-top">
+            <span class="bar-name">{{ s.name }}</span>
+            <b class="bar-num" [attr.data-count]="s.level" data-suffix="%">0%</b>
+          </div>
+          <div class="bar-track">
+            <i class="bar-fill" [style.--lvl]="s.level + '%'" [style.transition-delay.ms]="i * 90"></i>
+          </div>
         </div>
       </div>
     </div>
+
   </section>
 
   <!-- ===== Projects ===== -->
   <section id="projects" class="section alt">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-num">04</span>
       <h2 class="sec-title">Featured Projects</h2>
     </div>
-    <div class="filters">
+    <div class="filters reveal">
       <button *ngFor="let c of categories" class="filter" [class.active]="selectedCategory === c" (click)="changeCategory(c)">{{ c }}</button>
     </div>
     <div class="projects-grid">
-      <article class="proj-card" *ngFor="let p of filteredProjects">
+      <article class="proj-card" *ngFor="let p of filteredProjects; let i = index" [style.animation-delay.ms]="i * 70">
         <div class="proj-head">
           <span class="proj-cat">{{ p.category }}</span>
           <a *ngIf="p.link" [href]="p.link" target="_blank" rel="noopener" class="proj-git" aria-label="View on GitHub">
@@ -195,12 +217,12 @@
 
   <!-- ===== Education & Certifications ===== -->
   <section id="education" class="section">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-num">05</span>
       <h2 class="sec-title">Education &amp; Training</h2>
     </div>
     <div class="edu-wrap">
-      <div class="edu-col">
+      <div class="edu-col reveal left">
         <h3 class="col-label">Education</h3>
         <div class="edu-card" *ngFor="let e of education">
           <span class="edu-year">{{ e.year }}</span>
@@ -209,7 +231,7 @@
           <small class="edu-board">{{ e.board }}</small>
         </div>
       </div>
-      <div class="edu-col">
+      <div class="edu-col reveal right">
         <h3 class="col-label">Certifications</h3>
         <div class="cert-card" *ngFor="let c of certifications">
           <span class="cert-mark">★</span>
@@ -224,12 +246,12 @@
 
   <!-- ===== Contact ===== -->
   <section id="contact" class="section alt">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-num">06</span>
       <h2 class="sec-title">Get In Touch</h2>
     </div>
     <div class="contact-grid">
-      <div class="contact-info">
+      <div class="contact-info reveal left">
         <h3>Let's build something together.</h3>
         <p>Have an opportunity, a project, or just want to say hello? My inbox is always open — I'll get back to you as soon as I can.</p>
 
@@ -251,7 +273,7 @@
         </div>
       </div>
 
-      <form class="contact-form" (ngSubmit)="sendMessage()" novalidate>
+      <form class="contact-form reveal right" (ngSubmit)="sendMessage()" novalidate>
         <div class="row2">
           <div class="fg">
             <label for="name">Name</label>

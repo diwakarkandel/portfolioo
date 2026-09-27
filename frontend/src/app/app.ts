@@ -1,7 +1,17 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import emailjs from '@emailjs/browser';
+
+interface BarSkill {
+  name: string;
+  level: number;
+}
+
+interface Pt {
+  x: number;
+  y: number;
+}
 
 interface Project {
   title: string;
@@ -40,12 +50,14 @@ interface Experience {
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit {
+export class App implements OnInit, AfterViewInit {
   menuOpen = false;
   scrolled = false;
   activeSection = 'home';
   selectedCategory = 'All';
   theme: 'dark' | 'light' = 'dark';
+
+  constructor(private host: ElementRef<HTMLElement>) {}
 
   navItems = ['Home', 'About', 'Experience', 'Skills', 'Projects', 'Education', 'Contact'];
 
@@ -72,10 +84,10 @@ export class App implements OnInit {
   ];
 
   stats = [
-    { value: '6', label: 'Projects Built' },
-    { value: '2', label: 'Internships' },
-    { value: '10+', label: 'Technologies' },
-    { value: '2026', label: 'BCA Graduate' }
+    { count: 6, suffix: '', label: 'Projects Built' },
+    { count: 2, suffix: '', label: 'Internships' },
+    { count: 10, suffix: '+', label: 'Technologies' },
+    { count: 2026, suffix: '', label: 'BCA Graduate' }
   ];
 
   strengths = [
@@ -106,6 +118,34 @@ export class App implements OnInit {
       skills: ['PHP', 'C Programming', 'Git', 'Webpack']
     }
   ];
+
+  // Proficiency bars
+  barSkills: BarSkill[] = [
+    { name: 'Java', level: 88 },
+    { name: 'Spring Boot', level: 85 },
+    { name: 'RESTful APIs', level: 84 },
+    { name: 'PostgreSQL & SQL', level: 80 },
+    { name: 'JavaScript (ES6+)', level: 80 },
+    { name: 'React.js', level: 75 },
+    { name: 'HTML5 & CSS3', level: 90 },
+    { name: 'PHP', level: 68 }
+  ];
+
+  // Radar / spider chart
+  radarAxes = [
+    { label: 'Backend', value: 88 },
+    { label: 'REST APIs', value: 85 },
+    { label: 'Databases', value: 82 },
+    { label: 'Frontend', value: 76 },
+    { label: 'OOP', value: 86 },
+    { label: 'Tooling', value: 72 }
+  ];
+  radarRings = [0.25, 0.5, 0.75, 1];
+  radarSpokes: Pt[] = [];
+  radarRingPolys: string[] = [];
+  radarShapePts: Pt[] = [];
+  radarShape = '';
+  radarLabels: { x: number; y: number; label: string; value: number; anchor: string }[] = [];
 
   categories = ['All', 'Java & Spring', 'PHP & MySQL', 'C'];
 
@@ -215,8 +255,75 @@ export class App implements OnInit {
   errorMessage = '';
   isSending = false;
 
+  private observer?: IntersectionObserver;
+
   ngOnInit() {
     this.loadTheme();
+    this.buildRadar();
+  }
+
+  ngAfterViewInit() {
+    const els = Array.from(this.host.nativeElement.querySelectorAll<HTMLElement>('.reveal'));
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce || !('IntersectionObserver' in window)) {
+      els.forEach(el => {
+        el.classList.add('in');
+        el.querySelectorAll<HTMLElement>('[data-count]').forEach(n => this.countUp(n));
+      });
+      return;
+    }
+
+    this.observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            el.classList.add('in');
+            el.querySelectorAll<HTMLElement>('[data-count]').forEach(n => this.countUp(n));
+            this.observer?.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.18, rootMargin: '0px 0px -40px 0px' }
+    );
+    els.forEach(el => this.observer!.observe(el));
+  }
+
+  private countUp(el: HTMLElement) {
+    const target = parseFloat(el.dataset['count'] || '0');
+    const suffix = el.dataset['suffix'] || '';
+    const duration = 1400;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  private buildRadar() {
+    const cx = 170, cy = 158, R = 118;
+    const n = this.radarAxes.length;
+    const pt = (i: number, r: number): Pt => {
+      const a = ((-90 + (i * 360) / n) * Math.PI) / 180;
+      return { x: +(cx + r * Math.cos(a)).toFixed(1), y: +(cy + r * Math.sin(a)).toFixed(1) };
+    };
+    this.radarSpokes = this.radarAxes.map((_, i) => pt(i, R));
+    this.radarRingPolys = this.radarRings.map(f =>
+      this.radarAxes.map((_, i) => { const p = pt(i, R * f); return `${p.x},${p.y}`; }).join(' ')
+    );
+    this.radarShapePts = this.radarAxes.map((ax, i) => pt(i, (R * ax.value) / 100));
+    this.radarShape = this.radarShapePts.map(p => `${p.x},${p.y}`).join(' ');
+    this.radarLabels = this.radarAxes.map((ax, i) => {
+      const p = pt(i, R + 22);
+      let anchor = 'middle';
+      if (p.x < cx - 6) anchor = 'end';
+      else if (p.x > cx + 6) anchor = 'start';
+      return { x: p.x, y: p.y, label: ax.label, value: ax.value, anchor };
+    });
   }
 
   @HostListener('window:scroll')
